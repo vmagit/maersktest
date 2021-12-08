@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Publish">
+  <Import Project="build.props" Condition="Exists('build.props')" />
+
+  <Target Name="Clean">
+    <MSBuild Projects="@(SolutionFileName)" Targets="Clean" />
+  </Target>
+
+  <Target Name="Build">
+    <CallTarget Targets="Publish" />
+  </Target>
+ 
+  <Target Name="Rebuild">
+    <CallTarget Targets="Clean;Publish" />
+  </Target>
+
+  <Target Name="Publish">
+    <Message Text="Building solution $(SolutionFileName) with properties..." />
+    <MSBuild Projects="@(SolutionFileName)" Targets="Publish" Properties="Configuration=Release" ContinueOnError="true" />
+    <CallTarget Targets="PackageArtifacts" />
+  </Target>
+
+  <Target Name="PackageArtifacts">
+    <Message Text="Packaging output to $(OutputFile)" />
+    <ZipDirectory SourceDirectory="$(OutputZipSrc)" DestinationFile="$(OutputFile)" Overwrite="true" />  
+  </Target>
+</Project>
